@@ -1,0 +1,27 @@
+version: '3.2'
+services:
+
+  # front:
+  #   image: {{ registry }}/{{ registry_namespace }}/front:{{ pwa_version }}
+  #   ports:
+  #     - "80:80"
+
+  webide:  
+    image: {{ registry }}/{{ registry_namespace }}/webide:{{ pwa_version }}
+    hostname: ansible
+    environment:
+      - ANSIBLE_INVENTORY=/ansible/inventories/inventory.ini
+    volumes:
+      - /var/run/playwithansible/{{ pwa_stackname }}/ansible/inventories:/ansible/inventories
+      - /var/run/playwithansible/{{ pwa_stackname }}/ansible/inventories/inventory.ini:/ansible/inventories/inventory.ini:ro
+    ports:
+      - "3000:3000"
+
+{% for distribution in pwa_distributions %}
+  {{ distribution }}:
+    image: {{ registry }}/{{ registry_namespace }}/{{ distribution }}:{{ pwa_version }}
+    hostname: {{ distribution }}
+    domainname: pwa.net
+    ports:
+      - "22"
+{% endfor %}
