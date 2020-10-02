@@ -4,15 +4,17 @@ from typing import List
 
 import errno
 import os
+import pathlib
 import re
 import subprocess
 
 __version__ = "0.2.2"
 
 dir_run = "/var/run/playwithansible"
-file_template_compose = "templates/docker-compose.yml.j2"
-file_template_compose_testing = "templates/docker-compose-testing.yml.j2"
-file_template_inventory = "templates/inventory.ini.j2"
+dir_templates = pathlib.Path(__file__).parent / "../templates"
+file_template_compose = f"{dir_templates}/docker-compose.yml.j2"
+file_template_compose_testing = f"{dir_templates}/docker-compose-testing.yml.j2"
+file_template_inventory = f"{dir_templates}/inventory.ini.j2"
 
 docker_registry = "ghcr.io"
 docker_namespace = "playwithansible"
