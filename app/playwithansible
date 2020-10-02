@@ -3,7 +3,7 @@
 from typing import List
 import typer
 
-from lib.stack import create_stack, create_stack_testing, start_stack, stop_stack
+from pwa.stack import create_stack, create_stack_testing, start_stack, stop_stack
 
 __version__ = "0.2.2"
 
