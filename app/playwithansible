@@ -1,24 +1,10 @@
 #!/usr/bin/python3
-
 from typing import List
 import typer
 
-from pwa.stack import create_stack, create_stack_testing, start_stack, stop_stack
-
-__version__ = "0.2.2"
-
-supported_ansible_versions = [
-    "2.7.16", 
-    "2.8.12", 
-    "2.9.10"
-    ]
-
-supported_distributions = [
-    "centos7", "centos8", 
-    "debian8", "debian9", "debian10",
-    "fedora30", "fedora31", "fedora32",
-    "ubuntu1804", "ubuntu1910", "ubuntu2004"
-    ]
+from pwa.stack import create_stack, create_stack_testing, stack_info, stack_list, start_stack, stop_stack
+from pwa.utils import stacks_list
+from pwa.vars import __version__, supported_ansible_versions, supported_distributions
 
 app = typer.Typer()
 
@@ -49,6 +35,12 @@ def distributions_callback(distributions: List[str]):
             raise typer.BadParameter("supported distributions: " + ', '.join(supported_distributions))
     return distributions
 
+def stackname_callback(stackname: str):
+    stacks = stacks_list()
+    if stackname not in stacks:
+        raise typer.BadParameter("stacks: " + ', '.join(stacks))
+    return stackname
+
 def ansible_version_completion(incomplete: str):
     completion = []
     for version in supported_ansible_versions:
@@ -62,6 +54,15 @@ def distributions_completion(incomplete: str):
         if distribution.startswith(incomplete):
             completion.append(distribution)
     return completion 
+
+def stackname_completion(incomplete: str):
+    completion = []
+    stacks = stacks_list()
+    for stack in stacks:
+        if stack.startswith(incomplete):
+            completion.append(stack)
+    return completion 
+
 
 @app.command()
 def create(stackname: str,    
@@ -82,27 +83,31 @@ def create(stackname: str,
     typer.echo(f"Creating stack '{stackname}'...")
     create_stack(stackname, distributions)
 
-@app.command()
-def create_testing(stackname: str,    
-    ansible_versions: List[str] = typer.Option(
-        [], "--ansible", "-a",
-        callback=ansible_versions_callback,
-        autocompletion=ansible_version_completion
-        ),
-    distributions: List[str] = typer.Option(
-        [], "--distribution", "-d",
-        callback=distributions_callback,
-        autocompletion=distributions_completion
-        ),
-    ):
-    """
-    Creates a testing stack
-    """
-    typer.echo(f"Creating testing stack '{stackname}'...")
-    create_stack_testing(stackname, ansible_versions, distributions)
+# @app.command()
+# def create_testing(stackname: str,    
+#     ansible_versions: List[str] = typer.Option(
+#         [], "--ansible", "-a",
+#         callback=ansible_versions_callback,
+#         autocompletion=ansible_version_completion
+#         ),
+#     distributions: List[str] = typer.Option(
+#         [], "--distribution", "-d",
+#         callback=distributions_callback,
+#         autocompletion=distributions_completion
+#         ),
+#     ):
+#     """
+#     Creates a testing stack
+#     """
+#     typer.echo(f"Creating testing stack '{stackname}'...")
+#     create_stack_testing(stackname, ansible_versions, distributions)
 
 @app.command()
-def start(stackname: str):
+def start(stackname: str = typer.Argument(
+    '',
+    callback=stackname_callback,
+    autocompletion=stackname_completion
+    )):
     """
     Starts a previously created stack
     """
@@ -110,7 +115,11 @@ def start(stackname: str):
     start_stack(stackname)
  
 @app.command()
-def stop(stackname: str):
+def stop(stackname: str = typer.Argument(
+    '',
+    callback=stackname_callback,
+    autocompletion=stackname_completion
+    )):
     """
     Stops a previously started stack
     """
@@ -118,25 +127,31 @@ def stop(stackname: str):
     stop_stack(stackname)
 
 @app.command()
-def delete(stackname: str):
+def delete(stackname: str = typer.Argument(
+    '',
+    callback=stackname_callback,
+    autocompletion=stackname_completion
+    )):
     """
     Deletes a previously created stack
     """
     typer.echo(f"Deleting stack '{stackname}'...")
 
 @app.command("list")
-def stacks_list():
+def cmd_list():
     """
     Lists stacks
     """
     typer.echo("list stacks")
+    stack_list()
 
-@app.command()
-def info(stackname: str):
-    """
-    Prints information about a stack
-    """
-    typer.echo("Information about stack '{stackname}'")
+# @app.command()
+# def info(stackname: str):
+#     """
+#     Prints information about a stack
+#     """
+#     typer.echo(f"Information about stack '{stackname}'")
+#     stack_info(stackname)
 
 @app.command()
 def version():

@@ -1,16 +1,22 @@
-
 from jinja2 import Template
+from rich.console import Console
+from rich.style import Style
+from rich.table import Table
 from typing import List
 
 import errno
+import json
 import os
 import pathlib
 import re
 import subprocess
 
-__version__ = "0.2.2"
+from pwa.utils import print_colored_distributions, stacks_list
+from pwa.vars import pwa_run_dir
 
-dir_run = "/var/run/playwithansible"
+#__version__ = "0.2.2"
+
+#pwa_run_dir = "/var/run/playwithansible"
 dir_templates = pathlib.Path(__file__).parent / "../templates"
 file_template_compose = f"{dir_templates}/docker-compose.yml.j2"
 file_template_compose_testing = f"{dir_templates}/docker-compose-testing.yml.j2"
@@ -35,7 +41,7 @@ def create_directory(dir: str):
             print(f"Creation of the directory '{dir}' failed ({e})")
 
 def create_stack(stackname: str, distributions: List[str]):
-    dir_stack = f"{dir_run}/{stackname}"
+    dir_stack = f"{pwa_run_dir}/{stackname}"
     dir_stack_inventories = f"{dir_stack}/ansible/inventories"
     create_directory(dir_stack_inventories)
     create_directory(f"{dir_stack_inventories}/groupvars")
@@ -49,7 +55,12 @@ def create_stack(stackname: str, distributions: List[str]):
             pwa_distributions[name]['versions'].append(version)
         else:
             pwa_distributions[name] = { 'versions': [ version ] }
-    
+    stack_data = {
+        'distributions': pwa_distributions
+    }
+    with open(f"{dir_stack}/stack.json", 'w') as outfile:
+        json.dump(stack_data, outfile)
+
     template_to_file(
         file_template_compose,
         f"{dir_stack}/docker-compose.yml",
@@ -67,7 +78,7 @@ def create_stack(stackname: str, distributions: List[str]):
         )
 
 def create_stack_testing(stackname: str, ansible_versions: List[str], distributions: List[str]):
-    dir_stack = f"{dir_run}/{stackname}"
+    dir_stack = f"{pwa_run_dir}/{stackname}"
     dir_stack_inventories = f"{dir_stack}/ansible/inventories"
     create_directory(dir_stack_inventories)
     create_directory(f"{dir_stack_inventories}/groupvars")
@@ -99,8 +110,23 @@ def create_stack_testing(stackname: str, ansible_versions: List[str], distributi
         pwa_distributions=pwa_distributions 
         )
 
+def stack_info(stackname: str):
+    print_colored_distributions(stackname)
+
+def stack_list():
+    console = Console()
+    table = Table()
+    table.add_column("Name", justify="left", style="cyan", no_wrap=True)
+    table.add_column("Distributions", style="magenta")
+    table.add_column("Status", justify="center", style="green")
+    stacks = stacks_list()
+    for stack in stacks:
+        table.add_row(stack, print_colored_distributions(stack), "ok")
+    console.print(table)
+
+
 def start_stack(stackname: str):
-    dir = f"{dir_run}/{stackname}"
+    dir = f"{pwa_run_dir}/{stackname}"
     process = subprocess.run(
         ['docker-compose', 
         '-f', f"{dir}/docker-compose.yml", 
@@ -111,7 +137,7 @@ def start_stack(stackname: str):
     print(process.stdout)
 
 def stop_stack(stackname: str):
-    dir = f"{dir_run}/{stackname}"
+    dir = f"{pwa_run_dir}/{stackname}"
     process = subprocess.run(
         ['docker-compose', 
         '-f', f"{dir}/docker-compose.yml", 
