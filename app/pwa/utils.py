@@ -38,6 +38,17 @@ def stack_config(stackname: str):
     return data
 
 
+def stack_nb_items(stackname: str):
+    config = stack_config(stackname)
+    count = 0
+    count += len(config['ansible'])
+    for d in config['distributions']:
+        for v in config['distributions'][d]['versions']:
+            count += 1
+    
+    return count
+
+
 def stacks_list():    
     p = Path(pwa_run_dir)
     stacks = [f.name for f in p.iterdir() if f.is_dir()]

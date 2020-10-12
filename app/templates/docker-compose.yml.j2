@@ -6,16 +6,27 @@ services:
   #   ports:
   #     - "80:80"
 
-  webide:  
-    image: {{ registry }}/{{ registry_namespace }}/webide:{{ pwa_version }}
-    hostname: ansible
+  # webide:  
+  #   image: {{ registry }}/{{ registry_namespace }}/webide:{{ pwa_version }}
+  #   hostname: ansible
+  #   environment:
+  #     - ANSIBLE_INVENTORY=/ansible/inventories/inventory.ini
+  #   volumes:
+  #     - /var/run/playwithansible/{{ pwa_stackname }}/ansible/inventories:/ansible/inventories
+  #     - /var/run/playwithansible/{{ pwa_stackname }}/ansible/inventories/inventory.ini:/ansible/inventories/inventory.ini:ro
+  #   # ports:
+  #   #   - "3000:3000"
+
+{% for ansible_version in pwa_ansible_versions %}
+  ansible-{{ ansible_version }}:
+    image: {{ registry }}/{{ registry_namespace }}/ansible-{{ ansible_version }}:{{ pwa_version }}
+    hostname: ansible-{{ ansible_version }}
     environment:
       - ANSIBLE_INVENTORY=/ansible/inventories/inventory.ini
     volumes:
-      - /var/run/playwithansible/{{ pwa_stackname }}/ansible/inventories:/ansible/inventories
+      - /var/run/playwithansible/{{ pwa_stackname }}/ansible/inventories:/ansible/inventories:ro
       - /var/run/playwithansible/{{ pwa_stackname }}/ansible/inventories/inventory.ini:/ansible/inventories/inventory.ini:ro
-    ports:
-      - "3000:3000"
+{% endfor %}
 
 {% for distribution in pwa_distributions %}
   {{ distribution }}:

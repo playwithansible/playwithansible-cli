@@ -3,9 +3,10 @@ __version__ = "0.2.4"
 pwa_run_dir = "/var/run/playwithansible"
 
 supported_ansible_versions = [
-    "2.7.16", 
-    "2.8.12", 
-    "2.9.10"
+    "2.7.18", 
+    "2.8.16", 
+    "2.9.14",
+    "2.10.0"
     ]
 
 supported_distributions = [
