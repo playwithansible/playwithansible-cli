@@ -1,14 +1,16 @@
 # Playwithansible Command Line Interface
 
-## Build
+## Docker
+
+### Build
 
 ```shell
 docker build -t ghcr.io/playwithansible/playwithansible-cli:0.2.4 .
 ```
 
-## Run
+### Run
 
-### User mode
+#### User mode
 
 ```shell
 docker run -it \
@@ -20,7 +22,7 @@ docker run -it \
 playwithansible create -d debian9 -d centos8 -d ubuntu2004 -d fedora32 -a 2.9.14 latest
 ```
 
-### Devel mode
+#### Devel mode
 
 ```shell
 docker run -it \
@@ -28,5 +30,5 @@ docker run -it \
     -v /var/run/docker.sock:/var/run/docker.sock \
     -v /var/run/playwithansible:/var/run/playwithansible \
     -w /local/app \
-    ghcr.io/playwithansible/playwithansible-cli:0.2.2 bash
+    ghcr.io/playwithansible/playwithansible-cli:0.2.4 bash
 ```
