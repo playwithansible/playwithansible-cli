@@ -19,6 +19,6 @@ ansible_python_interpreter=/usr/bin/python3
 {% for distrib in pwa_distributions -%}
 [{{ distrib }}]
 {% for version in pwa_distributions[distrib]["versions"] -%}
-{{ distrib }}{{ version }}
+{{ distrib }}{{ version }} {% if distrib == 'debian' and version == '8' -%}ansible_python_interpreter=/usr/bin/python{%- endif %}
 {% endfor %}
 {% endfor %}
