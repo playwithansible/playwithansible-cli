@@ -12,7 +12,6 @@ services:
   #   environment:
   #     - ANSIBLE_INVENTORY=/ansible/inventories/inventory.ini
   #   volumes:
-  #     - /var/run/playwithansible/{{ pwa_stackname }}/ansible/inventories:/ansible/inventories
   #     - /var/run/playwithansible/{{ pwa_stackname }}/ansible/inventories/inventory.ini:/ansible/inventories/inventory.ini:ro
   #   # ports:
   #   #   - "3000:3000"
@@ -24,7 +23,6 @@ services:
     environment:
       - ANSIBLE_INVENTORY=/ansible/inventories/inventory.ini
     volumes:
-      - /var/run/playwithansible/{{ pwa_stackname }}/ansible/inventories:/ansible/inventories:ro
       - /var/run/playwithansible/{{ pwa_stackname }}/ansible/inventories/inventory.ini:/ansible/inventories/inventory.ini:ro
 {% endfor %}
 
