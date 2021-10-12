@@ -1,0 +1,54 @@
+---
+distribution_versions:
+
+  # CentOS
+  - name: centos7
+    display_name: "CentOS 7"
+    distribution: centos
+    version: 7
+  - name: centos8
+    display_name: "CentOS 8"
+    distribution: centos
+    version: 8
+
+  # Debian
+  - name: debian8
+    display_name: "Debian 8 (Jessie)"
+    distribution: debian
+    version: 8
+  - name: debian9
+    display_name: "Debian 9 (Stretch)"
+    distribution: debian
+    version: 9
+  - name: debian10
+    display_name: "Debian 10 (Buster)"
+    distribution: debian
+    version: 10
+
+  # Fedora
+  - name: fedora31
+    display_name: "Fedora 31"
+    distribution: fedora
+    version: 31
+  - name: fedora32
+    display_name: "Fedora 32"
+    distribution: fedora
+    version: 32
+  - name: fedora33
+    display_name: "Fedora 33"
+    distribution: fedora
+    version: 33
+
+  # Ubuntu
+  - name: ubuntu1804
+    display_name: "Ubuntu 18.04 (Bionic Beaver)"
+    distribution: ubuntu
+    version: "18.04"
+  - name: ubuntu1910
+    display_name: "Ubuntu 19.10 (Eoan Ermine)"
+    distribution: ubuntu
+    version: "19.10"
+  - name: ubuntu2004
+    display_name: "Ubuntu 20.04 (Focal Fossa)"
+    distribution: ubuntu
+    version: "20.04"
