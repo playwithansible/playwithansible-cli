@@ -20,17 +20,24 @@ distrib_style = {
 
 
 def print_colored_distributions(stackname: str):
+    """
+    Prints distributions with colors
+    """
     config = stack_config(stackname)
     text = Text()
-    for d in config['distributions']:
-        versions = f"{d[0:3].capitalize()} " + "/".join(config['distributions'][d]['versions'])
-        text.append(versions, style=distrib_style[d])
+    for distrib in config['distributions']:
+        versions = "/".join(config['distributions'][distrib]['versions'])
+        distrib_versions = f"{distrib[0:3].capitalize()} {versions}"
+        text.append(distrib_versions, style=distrib_style[distrib])
         text.append(" ")
 
     return text
 
 
 def stack_config(stackname: str):
+    """
+    Returns stack <stackanme> configuration
+    """
     dir_stack = f"{pwa_run_dir}/{stackname}"
     with open(f"{dir_stack}/stack.json") as json_file:
         data = json.load(json_file)
@@ -39,18 +46,25 @@ def stack_config(stackname: str):
 
 
 def stack_nb_items(stackname: str):
+    """
+    Returns number of items in stack <stackname>
+    """
     config = stack_config(stackname)
     count = 0
     count += len(config['ansible'])
-    for d in config['distributions']:
-        for v in config['distributions'][d]['versions']:
+    for distrib in config['distributions']:
+        for version in config['distributions'][distrib]['versions']:
             count += 1
     
     return count
 
 
-def stacks_list():    
+def stacks_list():
+    """
+    Returns stacks list
+    """    
     p = Path(pwa_run_dir)
-    stacks = [f.name for f in p.iterdir() if f.is_dir()]
-
-    return stacks
+    if p.exists() and p.is_dir():
+        stacks = [f.name for f in p.iterdir() if f.is_dir()]
+        return stacks
+    return []

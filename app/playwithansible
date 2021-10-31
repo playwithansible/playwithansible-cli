@@ -3,34 +3,36 @@ from typing import List
 
 import typer
 
-from pwa.stack import create_stack, stack_info, stack_list, start_stack, stop_stack
+from pwa.stack import create_stack, stack_list, start_stack, stop_stack
 from pwa.utils import stacks_list
 from pwa.vars import __version__, supported_ansible_versions, supported_distributions
 
 app = typer.Typer()
 
-def ansible_version_callback(ansible: str):    
+def ansible_version_callback(ansible: str):
     """
     Select Ansible version.
     """
-
     if ansible not in supported_ansible_versions:
-        raise typer.BadParameter("Ansible supported versions: " + ', '.join(supported_ansible_versions))
+        versions = ', '.join(supported_ansible_versions)
+        raise typer.BadParameter(f"Ansible supported versions: {versions}")
     return ansible
 
 def ansible_versions_callback(ansible_versions: List[str]):
     """
     Select Ansible version.
     """
-    for version in ansible_versions:    
+    for version in ansible_versions:
+        versions = ', '.join(supported_ansible_versions)
         if version not in supported_ansible_versions:
-            raise typer.BadParameter("Ansible supported versions: " + ', '.join(supported_ansible_versions))
+            raise typer.BadParameter(f"Ansible supported versions: {versions}")
     return ansible_versions
 
 def distributions_callback(distributions: List[str]):
     for distribution in distributions:
         if distribution not in supported_distributions:
-            raise typer.BadParameter("supported distributions: " + ', '.join(supported_distributions))
+            distributions = ', '.join(supported_distributions)
+            raise typer.BadParameter(f"supported distributions: {distributions}")
     return distributions
 
 def stackname_callback(stackname: str):
@@ -45,13 +47,13 @@ def ansible_versions_completion(incomplete: str):
         if version.startswith(incomplete):
             completion.append(version)
     return completion
- 
+
 def distributions_completion(incomplete: str):
     completion = []
     for distribution in supported_distributions:
         if distribution.startswith(incomplete):
             completion.append(distribution)
-    return completion 
+    return completion
 
 def stackname_completion(incomplete: str):
     completion = []
@@ -59,14 +61,15 @@ def stackname_completion(incomplete: str):
     for stack in stacks:
         if stack.startswith(incomplete):
             completion.append(stack)
-    return completion 
+    return completion
 
 
 @app.command()
-def create(stackname: str = typer.Argument(
-        None,
+def create(
+    stackname: str = typer.Argument(
+        ...,
         help="The name of the stack to create"
-        ),    
+        ),
     ansible_versions: List[str] = typer.Option(
         None, "--ansible", "-a",
         help="Ansible version to add to the stack",
@@ -114,6 +117,23 @@ def stop(stackname: str = typer.Argument(
     typer.echo(f"Stopping stack '{stackname}'...")
     stop_stack(stackname)
 
+@app.command()
+def test(
+    stackname: str = typer.Argument(
+        None,
+        help="The name of the stack used to test",
+        callback=stackname_callback,
+        autocompletion=stackname_completion
+    ),
+    rolename: str = typer.Argument(
+        None,
+        help="The name of the role to test"
+    )
+    ):
+    """
+    Test role <role> on stack <stackname>
+    """
+    test_on_stack(stackname, rolename)
 
 @app.command()
 def delete(stackname: str = typer.Argument(
@@ -149,9 +169,11 @@ def version():
     """
     Prints playwithansible version
     """
+    versions = ', '.join(supported_ansible_versions)
+    distributions = ', '.join(supported_distributions)
     typer.echo(f"playwithansible {__version__}")
-    typer.echo(f"\tSupported Ansible : "  + ', '.join(supported_ansible_versions))
-    typer.echo(f"\tSupported Distribution : "  + ', '.join(supported_distributions))
+    typer.echo(f"\tSupported Ansible : {versions}")
+    typer.echo(f"\tSupported Distribution : {distributions}")
 
 
 if __name__ == "__main__":
