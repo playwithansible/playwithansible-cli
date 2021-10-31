@@ -1,6 +1,5 @@
 from jinja2 import Template
 from rich.console import Console
-from rich.style import Style
 from rich.table import Table
 from typing import List
 
@@ -17,6 +16,7 @@ from pwa.vars import __version__,pwa_run_dir
 
 dir_templates = pathlib.Path(__file__).parent / "../templates"
 file_template_compose = f"{dir_templates}/docker-compose.yml.j2"
+file_template_deployment = f"{dir_templates}/pwa-deployment.yml.j2"
 file_template_inventory = f"{dir_templates}/inventory.ini.j2"
 
 docker_registry = "ghcr.io"
@@ -30,12 +30,12 @@ def template_to_file(src_file: str, dst_file: str, **kwargs):
     with open(dst_file, "w+") as output_file:
         print(content, file=output_file)
 
-def create_directory(dir: str):
+def create_directory(directory: str):
     try:
-        os.makedirs(dir)
+        os.makedirs(directory)
     except OSError as e:
         if e.errno != errno.EEXIST:
-            print(f"Creation of the directory '{dir}' failed ({e})")
+            print(f"Creation of the directory '{directory}' failed ({e})")
 
 def create_stack(stackname: str, ansible_versions: List[str], distributions: List[str]):
     dir_stack = f"{pwa_run_dir}/{stackname}"
@@ -70,13 +70,23 @@ def create_stack(stackname: str, ansible_versions: List[str], distributions: Lis
         pwa_stackname=stackname,
         pwa_version=__version__,
         pwa_ansible_versions=pwa_ansible_versions,
-        pwa_distributions=distributions 
+        pwa_distributions=distributions
+        )
+    template_to_file(
+        file_template_deployment,
+        f"{dir_stack}/pwa-deployment.yml",
+        registry=docker_registry,
+        registry_namespace=docker_namespace,
+        pwa_stackname=stackname,
+        pwa_version=__version__,
+        pwa_ansible_versions=pwa_ansible_versions,
+        pwa_distributions=distributions
         )
     template_to_file(
         file_template_inventory,
         f"{dir_stack_inventories}/inventory.ini",
-        pwa_version=__version__, 
-        pwa_distributions=pwa_distributions 
+        pwa_version=__version__,
+        pwa_distributions=pwa_distributions
         )
 
 
@@ -88,17 +98,17 @@ def stack_status(stackname: str):
     nb_items = stack_nb_items(stackname)
     process = subprocess.run(
         ['docker-compose',
-        '-f', f"{dir}/docker-compose.yml", 
+        '-f', f"{dir}/docker-compose.yml",
         '-p', f"pwa_{stackname}",
         'ps' , '-q', '--filter', 'State=Up'],
-        stdout=subprocess.PIPE, 
+        stdout=subprocess.PIPE,
         universal_newlines=True)
     nb_lines = len(process.stdout.splitlines())
     status = 'Stopped'
     if nb_lines == nb_items:
         status = 'Started'
     elif nb_lines > 0 and nb_lines != nb_items:
-        status = 'Errors' 
+        status = 'Errors'
     
     return (status)
 
@@ -120,3 +130,6 @@ def start_stack(stackname: str):
 
 def stop_stack(stackname: str):
     compose_down(stackname)
+
+def test_on_stack(stackname: str, rolename: str):
+    pass

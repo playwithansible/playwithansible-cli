@@ -30,7 +30,6 @@ services:
   {{ distribution }}:
     image: {{ registry }}/{{ registry_namespace }}/{{ distribution }}:{{ pwa_version }}
     hostname: {{ distribution }}
-    domainname: pwa.net
     ports:
       - "22"
 {% endfor %}
