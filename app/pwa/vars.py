@@ -1,7 +1,7 @@
 import os
 import yaml
 
-__version__ = "0.2.4"
+__version__ = "0.2.6"
 
 data_dir = os.path.dirname(os.path.realpath('__file__')) + '/data'
 pwa_run_dir = "/var/run/playwithansible"

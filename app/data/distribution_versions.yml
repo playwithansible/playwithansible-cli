@@ -24,6 +24,10 @@ distribution_versions:
     display_name: "Debian 10 (Buster)"
     distribution: debian
     version: 10
+  - name: debian11
+    display_name: "Debian 11 (Bullseye)"
+    distribution: debian
+    version: 11
 
   # Fedora
   - name: fedora31
@@ -38,6 +42,10 @@ distribution_versions:
     display_name: "Fedora 33"
     distribution: fedora
     version: 33
+  - name: fedora34
+    display_name: "Fedora 34"
+    distribution: fedora
+    version: 34
 
   # Ubuntu
   - name: ubuntu1804
@@ -52,3 +60,15 @@ distribution_versions:
     display_name: "Ubuntu 20.04 (Focal Fossa)"
     distribution: ubuntu
     version: "20.04"
+  - name: ubuntu2010
+    display_name: "Ubuntu 20.10 (Groovy Gorilla)"
+    distribution: ubuntu
+    version: "20.10"
+  - name: ubuntu2104
+    display_name: "Ubuntu 21.04 (Hirsute Hippo)"
+    distribution: ubuntu
+    version: "21.04"
+  - name: ubuntu2110
+    display_name: "Ubuntu 21.10 (Impish Indri)"
+    distribution: ubuntu
+    version: "21.10"
