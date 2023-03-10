@@ -46,6 +46,18 @@ distribution_versions:
     display_name: "Fedora 34"
     distribution: fedora
     version: 34
+  - name: fedora35
+    display_name: "Fedora 35"
+    distribution: fedora
+    version: 35
+  - name: fedora36
+    display_name: "Fedora 36"
+    distribution: fedora
+    version: 36
+  - name: fedora37
+    display_name: "Fedora 37"
+    distribution: fedora
+    version: 37
 
   # Ubuntu
   - name: ubuntu1804
@@ -72,3 +84,11 @@ distribution_versions:
     display_name: "Ubuntu 21.10 (Impish Indri)"
     distribution: ubuntu
     version: "21.10"
+  - name: ubuntu2204
+    display_name: "Ubuntu 22.04 (Jammy Jellyfish)"
+    distribution: ubuntu
+    version: "22.04"
+  - name: ubuntu2210
+    display_name: "Ubuntu 22.10 (Kinetic Kudu)"
+    distribution: ubuntu
+    version: "22.10"
